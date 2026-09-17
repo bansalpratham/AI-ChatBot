@@ -17,8 +17,8 @@ function Header() {
     </> : 
     <>
     
-        <NavigationLink bg='#00fffc' to='/chat' text='Go To Chat' textColor='black' />
-    <NavigationLink bg='$51538f' textColor='white' to='/' text='logout' />
+        <NavigationLink bg='#00fffc' to='/login' text='Login' textColor='black' />
+    <NavigationLink bg='$51538f' textColor='white' to='/signup' text='Signup' />
     
     </>}
     </div>

@@ -9,7 +9,7 @@ type Props = {
 }
 
 function NavigationLink({ to, bg, text, textColor}: Props) {
-  return <Link to={to} style={{background: bg, color:textColor}} >{text}</Link>
+  return <Link className="nav-link" to={to} style={{background: bg, color:textColor}} >{text}</Link>
 }
 
 export default NavigationLink;
