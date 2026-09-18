@@ -25,7 +25,7 @@ function Login() {
               justifyContent:"center",
              }} >
               <Typography variant='h4' align='center' sx={{ p: 2, fontWeight: 600 }}>
-                login
+                Login
               </Typography>
              </Box>
             </form>
