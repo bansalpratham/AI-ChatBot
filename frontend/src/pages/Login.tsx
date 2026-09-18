@@ -4,7 +4,7 @@ function Login() {
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flex: 1 }}>
       <Box sx={{ p: 8, mt: 8, display: { md: 'flex', sm: 'none', xs: 'none' } }}>
-        <img src="airbot.png" alt="Robot" style={{width:"400px"}} />
+        <img src="airobot.png" alt="Robot" style={{width:"400px"}} />
       </Box>
       <Box
         sx={{
