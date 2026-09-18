@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import CustomizedInput from '../components/shared/CustomizedInput'
 
 function Login() {
   return (
@@ -27,6 +28,8 @@ function Login() {
               <Typography variant='h4' align='center' sx={{ p: 2, fontWeight: 600 }}>
                 Login
               </Typography>
+              <CustomizedInput type='email' name='email' label='Email' />
+              <CustomizedInput type='password' name='password' label='Password' />
              </Box>
             </form>
       </Box>
