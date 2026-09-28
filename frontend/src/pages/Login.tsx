@@ -2,15 +2,25 @@ import { Box, Typography , Button } from '@mui/material'
 import CustomizedInput from '../components/shared/CustomizedInput'
 import { RiLoginCircleLine } from "react-icons/ri";
 import { IoLogInOutline } from "react-icons/io5";
+import {toast} from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
-  const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
+  const auth = useAuth();
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    console.log(email,password)
+    const email = formData.get("email") as string ;
+    const password = formData.get("password") as string ;
+    try {
+        toast.loading("Signing In",{id:"login"})
+        await auth?.login(email,password);
+        toast.success("Signed In Successfully",{id:"login"})
+    } catch (error) {
+      console.log(error);
+        toast.error("Signing In Failed",{id:"login"});
+    }
   }
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flex: 1 }}>

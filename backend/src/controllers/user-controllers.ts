@@ -50,7 +50,7 @@ export const userSignup = async (req:Request,res:Response,next:NextFunction)=>{
             signed: true,
         });
 
-         return res.status(200).json({message:"OK",id:user._id.toString()})
+         return res.status(200).json({message:"OK",name:user.name,email:user.email})
 
     } catch (error) {
         return res.status(500).json({message:"ERROR",cause:error instanceof Error ? error.message : "Unknown error"})
@@ -92,7 +92,7 @@ export const userLogin = async (req:Request,res:Response,next:NextFunction)=>{
             signed: true,
         });
 
-         return res.status(201).json({message:"OK",id:user._id.toString()})
+         return res.status(201).json({message:"OK", name:user.name,email:user.email })
 
     } catch (error) {
         return res.status(500).json({message:"ERROR",cause:error instanceof Error ? error.message : "Unknown error"})
