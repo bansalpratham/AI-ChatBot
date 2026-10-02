@@ -17,7 +17,7 @@ export const verifyToToken = async (req: Request, res: Response, next: NextFunct
         return res.status(401).json({message:"Token Not Received "})
     }
     return new Promise<void>((resolve,reject)=> {
-        return jwt.verify(token,process.env.JWT_SECRET as string,(err,success)=>{
+        return jwt.verify(token,process.env.JWT_SECRET as string,(err: jwt.VerifyErrors | null, success: jwt.JwtPayload | string | undefined)=>{
             if (err) {
                 reject(err.message);
                 return res.status(401).json({message:"Token Expired"})
