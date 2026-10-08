@@ -54,6 +54,9 @@ const Chat = () => {
               <Typography sx={{fontSize:"40px",color:"white",mb:2,mx:"auto"}}>
                   Model - GPT 3.5 Turbo
               </Typography>
+              <Box sx={{width:"100%",height:"60vh",borderRadius:3,mx:'auto',display:'flex',flexDirection:"column",overflow:'scroll',overflowX:"hidden",scrollBehavior:"smooth"}} >
+
+              </Box>
       </Box>
     </Box>
   )
