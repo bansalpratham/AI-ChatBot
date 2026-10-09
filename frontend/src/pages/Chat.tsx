@@ -3,40 +3,25 @@ import { red } from '@mui/material/colors'
 import { useAuth } from '../context/AuthContext'
 import ChatItem from '../components/chat/Chatitem';
 import { IoMdSend } from 'react-icons/io';
-import { useRef } from 'react';
-
-const chats: Array<{ role: "user" | "assistant"; content: string }> = [
-  {
-    role: "user",
-    content: "Hello! How can you help me?"
-  },
-  {
-    role: "assistant",
-    content: "Hi! I'm your AI assistant. I can help you with coding, learning, writing, and more."
-  },
-  {
-    role: "user",
-    content: "Explain React hooks to me."
-  },
-  {
-    role: "assistant",
-    content: "React Hooks are functions that let you use state and other React features inside functional components. Common hooks include useState, useEffect, and useContext."
-  },
-  {
-    role: "user",
-    content: "What is useState?"
-  },
-  {
-    role: "assistant",
-    content: "useState is a React Hook that lets you add and manage state in a functional component."
-  }
-];
-
+import { useRef, useState } from 'react';
+import { sendChatRequest } from '../helpers/api-communicator';
+type Message = {
+  role:"user" | "assistant";
+  content: string;
+}
 const Chat = () => {
   const inputRef = useRef<HTMLInputElement|null>(null);
   const auth = useAuth();
+  const [chatMessages,setChatMessages] = useState<Message[]>([])
   const handleSubmit = async () => {
-    console.log(inputRef.current?.value)
+    const content = inputRef.current?.value as string;
+    if (inputRef && inputRef.current) {
+      inputRef.current.value = "";
+    }
+    const newMessage : Message = {role:"user",content};
+    setChatMessages((prev)=>[...prev,newMessage]);
+    const chatData = await sendChatRequest(content);
+    setChatMessages([...chatData.chats]);
   } 
   return (
     <Box
@@ -88,7 +73,7 @@ const Chat = () => {
                   Model - GPT 3.5 Turbo
               </Typography>
               <Box sx={{width:"100%",height:"60vh",borderRadius:3,mx:'auto',display:'flex',flexDirection:"column",overflow:'scroll',overflowX:"hidden",overflowY:"auto",scrollBehavior:"smooth"}} >
-                  {chats.map((chat,index) => (
+                  {chatMessages.map((chat,index) => (
                     <ChatItem content={chat.content} role={chat.role} key={index} />
                   ))}
               </Box>
