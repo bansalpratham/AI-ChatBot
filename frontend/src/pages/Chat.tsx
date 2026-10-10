@@ -20,8 +20,13 @@ const Chat = () => {
     }
     const newMessage : Message = {role:"user",content};
     setChatMessages((prev)=>[...prev,newMessage]);
+try {
     const chatData = await sendChatRequest(content);
     setChatMessages([...chatData.chats]);
+} catch (error: any) {
+    console.error("Status:", error.response?.status);
+    console.error("Response:", error.response?.data);
+}
   } 
   return (
     <Box
@@ -70,7 +75,7 @@ const Chat = () => {
       </Box>
       <Box sx={{display:"flex",flex:{md:0.8,xs:1,sm:1},flexDirection:'column',px:3}}>
               <Typography sx={{fontSize:"40px",color:"white",mb:2,mx:"auto"}}>
-                  Model - GPT 3.5 Turbo
+                  Model - Gemini 2.5 Flash
               </Typography>
               <Box sx={{width:"100%",height:"60vh",borderRadius:3,mx:'auto',display:'flex',flexDirection:"column",overflow:'scroll',overflowX:"hidden",overflowY:"auto",scrollBehavior:"smooth"}} >
                   {chatMessages.map((chat,index) => (

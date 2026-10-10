@@ -1,48 +1,47 @@
-import axios from "axios"
 
-export const loginUser = async (email: string, password: string) => {
+import axios from "axios";
 
-    const res = await axios.post(
-        "/user/login",
-        { email, password },
-        {
-            withCredentials: true
-        }
-    );
+const api = axios.create({
+    baseURL: "http://localhost:3000/api/v1",
+    withCredentials: true,
+});
 
-    if (res.status != 200) {
-        throw new Error("Unable to login");
-    }
+export const loginUser = async (
+    email: string,
+    password: string
+) => {
+    const res = await api.post("/user/login", {
+        email,
+        password,
+    });
 
-    const data = await res.data;
-    return data;
-}
+    return res.data;
+};
+
+export const signupUser = async (
+    name: string,
+    email: string,
+    password: string
+) => {
+    const res = await api.post("/user/signup", {
+        name,
+        email,
+        password,
+    });
+
+    return res.data;
+};
 
 export const checkAuthStatus = async () => {
+    const res = await api.get("/user/auth-status");
 
-    const res = await axios.get(
-        "/user/auth-status",
-        {
-            withCredentials: true
-        }
-    );
+    return res.data;
+};
 
-    if (res.status != 200) {
-        throw new Error("Unable to authenticate");
-    }
+export const sendChatRequest = async (message: string) => {
+    const res = await api.post("/chat/new", {
+        message,
+    });
 
-    const data = await res.data;
-    return data;
-}
-
-export const sendChatRequest = async (message:string) => {
-
-    const res = await axios.post("/chat/new",{message});
-
-    if (res.status !== 200) {
-        throw new Error("Unable to send chat");
-    }
-
-    const data = await res.data;
-    return data;
-}
+    return res.data;
+};

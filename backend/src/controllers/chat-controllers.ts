@@ -1,40 +1,74 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import User from "../models/User.js";
-import { configureOpenAI } from "../configs/openai-config.js";
-import { ChatCompletionRequestMessage, OpenAIApi } from 'openai'
+import { configureGemini } from "../configs/openai-config.js";
 
-export const generateChatCompletion = async (req:Request , res:Response,next:NextFunction) => {
-        const {message} = req.body;
+export const generateChatCompletion = async (
+    req: Request,
+    res: Response
+) => {
+    const { message } = req.body;
 
-        try {
-            const user = await User.findById(res.locals.jwtData.id);
-            if (!user) return res.status(401).json({message:"User not registered OR Token malfunctioned"})
-    
-            //grab chats of user
-    
-            const chats = user.chats.map(({role,content})=>({role,content})) as ChatCompletionRequestMessage[] ;
-            chats.push({content:message,role:"user"});
-            user.chats.push({content:message,role:"user"});
-    
-            //send all chats with new one to openAI API
-    
-            const config = configureOpenAI();
-            const openai = new OpenAIApi(config);
-    
-            // get latest response
-    
-            const chatResponse = await openai.createChatCompletion({
-                model:"gpt-3.5-turbo",
-                messages:chats,
-            })
-            const assistantMessage = chatResponse.data.choices[0]?.message;
-            if (!assistantMessage) {
-                return res.status(500).json({ message: "No response received from OpenAI" });
-            }
-            user.chats.push(assistantMessage);
-            await user.save();
-            return res.status(200).json({chats: user.chats});
-        } catch (error) {
-            return res.status(500).json({message:"Something went wrong"});
+    try {
+        if (typeof message !== "string" || !message.trim()) {
+            return res.status(400).json({
+                message: "Please provide a message",
+            });
         }
-}
+
+        // Temporary development user. No JWT required.
+        const devEmail = "developer@example.com";
+
+        let user = await User.findOne({ email: devEmail });
+
+        if (!user) {
+            user = await User.create({
+                name: "Developer",
+                email: devEmail,
+                password: "development-only",
+                chats: [],
+            });
+        }
+
+        const chats = user.chats.map(({ role, content }) => ({
+            role: role === "assistant" ? "model" : "user",
+            parts: [{ text: content }],
+        }));
+
+        chats.push({
+            role: "user",
+            parts: [{ text: message.trim() }],
+        });
+
+        const gemini = configureGemini();
+
+        const chatResponse = await gemini.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: chats,
+        });
+
+        const assistantText = chatResponse.text;
+
+        if (!assistantText) {
+            return res.status(500).json({
+                message: "No response received from Gemini",
+            });
+        }
+
+        user.chats.push(
+            { role: "user", content: message.trim() },
+            { role: "assistant", content: assistantText }
+        );
+
+        await user.save();
+
+        return res.status(200).json({
+            chats: user.chats,
+        });
+    } catch (error) {
+        console.error("Gemini API error:", error);
+
+        return res.status(500).json({
+            message: "Failed to generate a response. Check the backend terminal.",
+        });
+    }
+};
